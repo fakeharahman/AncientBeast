@@ -203,7 +203,9 @@ export class UI {
 			{
 				$button: $j('#materialize_button'),
 				css: {
-					disabled: {},
+					disabled: {
+						cursor: 'not-allowed',
+					},
 					glowing: {
 						cursor: 'pointer',
 					},
@@ -1124,9 +1126,10 @@ export class UI {
 			});
 
 			// Materialize button
-			$j('#materialize_button').removeClass('glowing').unbind('click');
-			$j('#card .sideA').addClass('disabled').unbind('click');
+			this.materializeButton.changeState('disabled');
 			$j('#materialize_button p').text(game.msg.ui.dash.heavyDev);
+
+			$j('#card .sideA').addClass('disabled').unbind('click');
 		}
 	}
 
@@ -2428,7 +2431,10 @@ export class UI {
 			$queueItem = this.$queue.find('.vignette[creatureid="' + creaID + '"]:first');
 		}
 
-		if ($queueItem.length > 0) {
+		const maxBounceHeight = screen.height / 3;
+		const isBounceHeightExceeded = parseInt($queueItem.css('top'), 10) > maxBounceHeight;
+
+		if ($queueItem.length > 0 && !isBounceHeightExceeded) {
 			$queueItem.stop();
 			$queueItem.animate(
 				{
@@ -2462,6 +2468,11 @@ export class UI {
 					text = 'Frozen';
 					textElement.css({
 						background: 'darkturquoise',
+					});
+				} else if (creature.dizzy) {
+					text = 'Dizzy';
+					textElement.css({
+						background: 'saddlebrown',
 					});
 				} else if (creature.materializationSickness) {
 					text = 'Sickened';
